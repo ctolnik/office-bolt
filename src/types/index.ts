@@ -45,6 +45,33 @@ export interface ApplicationCategory {
   is_active: boolean;
 }
 
+export interface CategoryType {
+  id: string;
+  key: string;
+  name: string;
+  color?: string;
+  sort_order?: number;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface CreateCategoryType {
+  key: string;
+  name: string;
+  color?: string;
+  sort_order?: number;
+  is_active?: boolean;
+}
+
+export interface UpdateCategoryType {
+  key?: string;
+  name?: string;
+  color?: string;
+  sort_order?: number;
+  is_active?: boolean;
+}
+
 
 // Activity Tracking Types
 export interface DailyActivitySummary {
@@ -74,10 +101,27 @@ export interface ProcessCatalogEntry {
   friendly_name: string;
   process_names: string[];
   window_title_patterns: string[];
-  category: 'productive' | 'unproductive' | 'neutral' | 'communication' | 'entertainment';
+  category_id: string;
+  category?: CategoryType;
   is_active: boolean;
   created_at: string;
   updated_at: string;
+}
+
+export interface CreateProcessCatalogEntry {
+  friendly_name: string;
+  process_names: string[];
+  window_title_patterns: string[];
+  category_id: string;
+  is_active?: boolean;
+}
+
+export interface UpdateProcessCatalogEntry {
+  friendly_name?: string;
+  process_names?: string[];
+  window_title_patterns?: string[];
+  category_id?: string;
+  is_active?: boolean;
 }
 
 

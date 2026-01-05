@@ -20,7 +20,7 @@ import {
 import { Badge } from '@/components/ui/badge';
 import { X } from 'lucide-react';
 import { useCreateProcessCatalog, useUpdateProcessCatalog } from '@/hooks/useProcessCatalog';
-import { PROCESS_CATEGORY_LABELS, type ProcessCategory } from '@/utils/categoryUtils';
+import { useCategoryTypes } from '@/hooks/useCategoryTypes';
 import type { ProcessCatalogEntry } from '@/types';
 
 interface ProcessCatalogDialogProps {
@@ -35,22 +35,25 @@ export function ProcessCatalogDialog({ open, onOpenChange, entry }: ProcessCatal
   const [processInput, setProcessInput] = useState('');
   const [windowPatterns, setWindowPatterns] = useState<string[]>([]);
   const [patternInput, setPatternInput] = useState('');
-  const [category, setCategory] = useState<ProcessCategory>('neutral');
+  const [categoryId, setCategoryId] = useState('');
 
   const createMutation = useCreateProcessCatalog();
   const updateMutation = useUpdateProcessCatalog();
+  const { data: categories } = useCategoryTypes();
+
+  const activeCategories = categories?.filter(c => c.is_active) || [];
 
   useEffect(() => {
     if (entry) {
       setFriendlyName(entry.friendly_name);
       setProcessNames(entry.process_names);
       setWindowPatterns(entry.window_title_patterns);
-      setCategory(entry.category);
+      setCategoryId(entry.category_id);
     } else {
       setFriendlyName('');
       setProcessNames([]);
       setWindowPatterns([]);
-      setCategory('neutral');
+      setCategoryId('');
     }
   }, [entry, open]);
 
@@ -79,7 +82,7 @@ export function ProcessCatalogDialog({ open, onOpenChange, entry }: ProcessCatal
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!friendlyName.trim() || processNames.length === 0) {
+    if (!friendlyName.trim() || processNames.length === 0 || !categoryId) {
       return;
     }
 
@@ -87,7 +90,7 @@ export function ProcessCatalogDialog({ open, onOpenChange, entry }: ProcessCatal
       friendly_name: friendlyName,
       process_names: processNames,
       window_title_patterns: windowPatterns,
-      category,
+      category_id: categoryId,
     };
 
     if (entry) {
@@ -194,18 +197,29 @@ export function ProcessCatalogDialog({ open, onOpenChange, entry }: ProcessCatal
 
             <div className="space-y-2">
               <Label htmlFor="category">Категория *</Label>
-              <Select value={category} onValueChange={(val) => setCategory(val as ProcessCategory)}>
+              <Select value={categoryId} onValueChange={setCategoryId}>
                 <SelectTrigger>
-                  <SelectValue />
+                  <SelectValue placeholder="Выберите категорию" />
                 </SelectTrigger>
                 <SelectContent>
-                  {(Object.entries(PROCESS_CATEGORY_LABELS) as [ProcessCategory, string][]).map(([key, label]) => (
-                    <SelectItem key={key} value={key}>
-                      {label}
+                  {activeCategories.map((cat) => (
+                    <SelectItem key={cat.id} value={cat.id}>
+                      <div className="flex items-center gap-2">
+                        <div
+                          className="w-3 h-3 rounded"
+                          style={{ backgroundColor: cat.color || '#6B7280' }}
+                        />
+                        {cat.name}
+                      </div>
                     </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
+              {activeCategories.length === 0 && (
+                <p className="text-xs text-amber-600">
+                  Нет активных категорий. Добавьте их в настройках.
+                </p>
+              )}
             </div>
           </div>
           <DialogFooter>
@@ -217,6 +231,7 @@ export function ProcessCatalogDialog({ open, onOpenChange, entry }: ProcessCatal
               disabled={
                 !friendlyName.trim() ||
                 processNames.length === 0 ||
+                !categoryId ||
                 createMutation.isPending ||
                 updateMutation.isPending
               }

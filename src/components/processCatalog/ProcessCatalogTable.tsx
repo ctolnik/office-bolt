@@ -12,7 +12,6 @@ import { Pencil, Trash2 } from 'lucide-react';
 import { format } from 'date-fns';
 import { ru } from 'date-fns/locale';
 import { useDeleteProcessCatalog } from '@/hooks/useProcessCatalog';
-import { PROCESS_CATEGORY_LABELS, getCategoryBgClass } from '@/utils/categoryUtils';
 import type { ProcessCatalogEntry } from '@/types';
 
 interface ProcessCatalogTableProps {
@@ -62,9 +61,23 @@ export function ProcessCatalogTable({ entries, onEdit }: ProcessCatalogTableProp
               </div>
             </TableCell>
             <TableCell>
-              <Badge variant="outline" className={getCategoryBgClass(entry.category)}>
-                {PROCESS_CATEGORY_LABELS[entry.category]}
-              </Badge>
+              {entry.category ? (
+                <Badge
+                  variant="outline"
+                  className="border"
+                  style={{
+                    backgroundColor: `${entry.category.color}20`,
+                    borderColor: entry.category.color,
+                    color: entry.category.color,
+                  }}
+                >
+                  {entry.category.name}
+                </Badge>
+              ) : (
+                <Badge variant="outline" className="text-muted-foreground">
+                  Не указана
+                </Badge>
+              )}
             </TableCell>
             <TableCell className="text-sm text-muted-foreground">
               {format(new Date(entry.updated_at), 'dd.MM.yyyy', { locale: ru })}
