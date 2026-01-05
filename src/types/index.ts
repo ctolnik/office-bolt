@@ -35,16 +35,6 @@ export interface Employee {
 }
 
 // Settings types
-export interface ApplicationCategory {
-  id: string;
-  process_name: string;
-  process_pattern?: string;
-  category: 'productive' | 'unproductive' | 'neutral' | 'communication' | 'entertainment' | 'system';
-  created_at: string;
-  updated_at: string;
-  is_active: boolean;
-}
-
 export interface CategoryType {
   id: string;
   key: string;
@@ -92,7 +82,7 @@ export interface ProgramUsage {
   process_name: string;
   friendly_name: string;
   duration_sec: number;
-  category?: 'productive' | 'unproductive' | 'neutral' | 'communication' | 'entertainment' | 'system';
+  category?: string;
   window_titles?: string[];
 }
 
@@ -134,7 +124,7 @@ export interface ActivitySegment {
   window_title: string;
   computer_name: string;
   username: string;
-  category?: 'productive' | 'unproductive' | 'neutral' | 'communication' | 'entertainment' | 'system';
+  category?: string;
 }
 
 // Activity types
@@ -146,7 +136,7 @@ export interface ActivityEvent {
   process_name: string;
   duration: number;
   is_active: boolean;
-  category?: 'productive' | 'unproductive' | 'neutral' | 'communication' | 'entertainment' | 'system';
+  category?: string;
 }
 
 export interface ActivitySummary {

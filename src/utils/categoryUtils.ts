@@ -1,5 +1,20 @@
 /**
  * Utility functions for working with application categories
+ *
+ * @deprecated This file contains legacy hardcoded categories for backward compatibility
+ * with visualization components (charts, reports, activity timeline).
+ *
+ * For CRUD operations on categories, use:
+ * - /api/category-types endpoint
+ * - useCategoryTypes hook
+ * - CategoryTypeDialog component
+ *
+ * For process categorization rules, use:
+ * - /api/process-catalog endpoint
+ * - ProcessCatalogDialog component
+ *
+ * These utilities provide fallback colors and labels when dynamic categories
+ * are not available or for historical data compatibility.
  */
 
 export type AppCategory = 'productive' | 'unproductive' | 'neutral' | 'communication' | 'entertainment' | 'system';
